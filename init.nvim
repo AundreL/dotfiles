@@ -1,0 +1,251 @@
+" title: init.vim
+" info: custom neo vim configuration
+" author: Aundre Lattie
+" created: 12/7/2020
+
+" --------------------------------------------------------
+" Flags 
+" --------------------------------------------------------
+
+syntax enable                           " Enables syntax highlighing
+
+set timeoutlen=300                      " by default timeoutlen is 1000 ms
+set hidden                              " required to keep multiple buffers open multiple buffers
+set nowrap                              " display long lines as just one line
+set encoding=utf-8                      " the encoding displayed 
+set pumheight=10                        " makes popup menu smaller
+set fileencoding=utf-8                  " the encoding written to file
+set ruler                               " show the cursor position all the time
+set cmdheight=2                         " more space for displaying messages
+set iskeyword+=-                        " treat dash separated words as a word text object"
+set mouse=r                             " enable your mouse
+set splitbelow                          " horizontal splits will automatically be below
+set splitright                          " vertical splits will automatically be to the right
+set t_Co=256                            " support 256 colors
+set conceallevel=0                      " so that I can see `` in markdown files
+set expandtab                           " converts tabs to spaces
+set shiftwidth=3                        " change the number of space characters inserted for indentation
+set softtabstop=3                       " sets what happends when you hit tab and backspace
+set autoindent                          " good auto indent
+set showtabline=3                       " Always show tabs 
+
+set number relativenumber               " line numbers
+set cursorline                          " enable highlighting of the current line
+set background=dark                     " tell vim what the background color looks like
+set updatetime=300                      " faster completion
+set formatoptions-=cro                  " stop newline continution of comments
+set showcmd                             " show when in leader command
+
+set clipboard+=unnamedplus               " copy paste between vim and system
+let mapleader=' '
+" --------------------------------------------------------
+" Plugins
+" --------------------------------------------------------
+
+" auto-install vim-plug
+if empty(glob('~/.config/nvim/autoload/plug.vim'))
+   silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
+      \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+   
+   autocmd VimEnter * PlugInstall
+   autocmd VimEnter * PlugInstall | source $MYVIMRC
+endif
+
+call plug#begin('~/.config/nvim/autoload/plugged')
+   Plug 'joshdick/onedark.vim'
+   Plug 'itchyny/lightline.vim'
+   Plug 'mengelbrecht/lightline-bufferline'
+   Plug 'preservim/nerdcommenter'
+   Plug 'tpope/vim-surround'
+   Plug 'neoclide/coc.nvim', {'branch': 'release'}
+   Plug 'junegunn/fzf'
+   
+   "Syntax Highlighting
+   Plug 'leafgarland/typescript-vim'
+   Plug 'peitalin/vim-jsx-typescript'
+   Plug 'tpope/vim-markdown'
+   Plug 'cakebaker/scss-syntax.vim'
+   Plug 'vim-python/python-syntax'
+   Plug 'chr4/nginx.vim'
+   Plug 'ekalinin/Dockerfile.vim'
+call plug#end()
+
+" --------------------------------------------------------
+" General
+" --------------------------------------------------------
+
+"filetype detection scripts
+autocmd BufNewFile,BufRead *.scss set filetype=scss.css
+autocmd BufNewFile,BufRead *.tsx,*.jsx set filetype=typescript.tsx
+autocmd BufNewFile,BufRead *.make set filetype=make
+
+function! s:DetectBash()
+    if getline(1) =~# '^#!.*/bin/env\s\+bash\>'
+        set filetype=bash
+    endif
+endfun
+
+function! s:DetectPython()
+    if getline(1) =~# '^#!.*/bin/env\s\+python3\>'
+        set filetype=python
+    endif
+endfun
+
+autocmd BufNewFile,BufRead * call s:DetectBash()
+autocmd BufNewFile,BufRead * call s:DetectPython()
+
+autocmd Filetype scss.css setlocal expandtab shiftwidth=2 softtabstop=2
+autocmd Filetype typescript.tsx setlocal expandtab shiftwidth=2 softtabstop=2
+autocmd FileType make setlocal noexpandtab shiftwidth=4 tabstop=4
+autocmd FileType python setlocal expandtab shiftwidth=3 softtabstop=3
+autocmd FileType scss set iskeyword+=-
+
+autocmd BufRead,BufNewFile *.nginx set ft=nginx
+autocmd BufRead,BufNewFile nginx*.conf set ft=nginx
+autocmd BufRead,BufNewFile *nginx.conf set ft=nginx
+autocmd BufRead,BufNewFile */etc/nginx/* set ft=nginx
+autocmd BufRead,BufNewFile */usr/local/nginx/conf/* set ft=nginx
+autocmd BufRead,BufNewFile */nginx/*.conf set ft=nginx
+" --------------------------------------------------------
+" Key Mappings
+" --------------------------------------------------------
+
+set pastetoggle=<F2>                    " fix paste behaviour
+
+" allow continual pasting
+xnoremap p pgvy
+vnoremap p pgvy
+
+" tab navigate
+nnoremap <leader>w :bnext<CR>
+nnoremap <leader>q :bprevious<CR>
+
+nnoremap <leader>o o<Esc>
+nnoremap <leader>O O<Esc>
+
+nmap <Y> y$
+nmap <F7> gg=G<C-o><C-o>
+command! ReIndent execute "normal! gg=G"
+
+nnoremap <leader>r :source $MYVIMRC<cr>
+
+"search in place
+nnoremap <leader>s *``
+
+"nnoremap <leader>c <Plug>NERDCommenterToggle
+
+" --------------------------------------------------------
+"  Themes
+" --------------------------------------------------------
+
+if (has("autocmd") && !has("gui_running"))
+   augroup colorset
+      autocmd!
+      let s:foreground = { "gui": "#ABB2BF", "cterm": "145", "cterm16" : "7" }
+      let s:background = { "gui": "#2E2E2E", "cterm": "160", "cterm16" : "7"  }
+      
+      autocmd ColorScheme * call onedark#set_highlight("Normal", { "fg": s:foreground })
+      autocmd ColorScheme * call onedark#set_highlight("Normal", { "bg": s:background })
+   augroup END
+endif
+
+hi Comment cterm=italic
+let g:onedark_hide_endofbuffer=1
+let g:onedark_terminal_italics=1
+let g:onedark_termcolors=256
+
+syntax on
+colorscheme onedark
+
+" --------------------------------------------------------
+" Other 
+" --------------------------------------------------------
+
+" checks if your terminal has 24-bit color support
+if (has("termguicolors"))
+   set termguicolors
+
+   highlight Cursor guifg=black guibg=white
+   highlight LineNr  guibg=NONE
+   highlight lCursor guifg=white guibg=green
+   set guicursor=n-v-c:hor20-Cursor
+   set guicursor+=i:ver30-blinkon0
+   autocmd VimLeave * set guicursor=a:hor20-blinkon0
+endif
+
+augroup numbertoggle
+  autocmd!
+  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
+  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+augroup END
+
+
+" --------------------------------------------------------
+" Plugin Specific
+" --------------------------------------------------------
+
+" ********************************************************
+" Indent
+" ********************************************************
+
+let g:indentLine_char = '┊'
+
+
+" ********************************************************
+" Linelight
+" ********************************************************
+let g:python_highlight_all = 1
+
+set laststatus=2                        " linelight needs this setting to be visable
+let g:lightline#bufferline#show_number  = 1
+let g:lightline#bufferline#shorten_path = 0
+let g:lightline#bufferline#unnamed      = '[No Name]'
+
+let g:lightline                  = {}
+let g:lightline.tabline          = {'left': [['buffers']], 'right': [['close']]}
+let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
+let g:lightline.component_type   = {'buffers': 'tabsel'}
+
+" ********************************************************
+" FZF
+" ********************************************************
+set wildignore+=**node_modules/**
+
+" ********************************************************
+" (COC) Conqure of Completion Mappings
+" ********************************************************
+
+" use <tab> for trigger completion and navigate to the next complete item
+inoremap <silent><expr> <Tab>
+         \ pumvisible() ? "\<C-n>" :
+         \ <SID>check_back_space() ? "\<Tab>" :
+         \ coc#refresh()
+
+function! s:check_back_space() abort
+   let col = col('.') - 1
+   return !col || getline('.')[col - 1]  =~ '\s'
+endfunction
+
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
+" position. Coc only does snippet and additional edit on confirm.
+" <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
+if exists('*complete_info')
+   inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+else
+   inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+endif
+
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Formatting selected code.
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
