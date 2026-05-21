@@ -212,6 +212,7 @@ vim.keymap.set({ "n", "v" }, "X", '"_X')
 -- Optional: Preserve your yank behavior when pasting over selected text in Visual mode
 vim.keymap.set("v", "p", '"_dP')
 
+vim.api.nvim_set_hl(0, "DiagnosticUnnecessary", {})
 -- fix cursor shape on exit
 local restore_cursor_augroup = vim.api.nvim_create_augroup("restore_cursor_shape_on_exit", { clear = true })
 
