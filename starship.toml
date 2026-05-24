@@ -12,6 +12,7 @@ symbol = "\ueb29 "
 
 [username]
 show_always = true
+
 style_user = "bold yellow"
 # Crucial for preventing wrap bugs in tight tmux splits
 add_newline = false
