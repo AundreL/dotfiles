@@ -1,4 +1,5 @@
 function start-up
+    starship init fish | source
     fastfetch
 end
 
@@ -58,6 +59,10 @@ function start-dev -d "tmux session starting"
     end
 
     tmux attach-session -t $session_name
+end
+
+function starship_transient_prompt_func
+    starship module character
 end
 
 start-up
