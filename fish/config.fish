@@ -37,24 +37,24 @@ function start-dev -d "tmux session starting"
 
     if test $status != 0
         # setup bottom row
-        tmux new-session -d -s $session_name -x "$COLUMNS" -y "$LINES"
-        tmux send-keys -t $session_name clear Enter
+        tmux -u new-session -d -s $session_name -x "$COLUMNS" -y "$LINES"
+        tmux -u send-keys -t $session_name clear Enter
 
         # split pane
-        tmux split-window -v -l 16 -t $session_name
-        tmux send-keys -t $session_name clear Enter
+        tmux -u split-window -v -l 16 -t $session_name
+        tmux -u send-keys -t $session_name clear Enter
 
-        tmux select-pane -t $session_name:1.2
-        tmux split-window -h -l 160 -t $session_name
-        tmux send-keys -t $session_name clear Enter
+        tmux -u select-pane -t $session_name:1.2
+        tmux -u split-window -h -l 160 -t $session_name
+        tmux -u send-keys -t $session_name clear Enter
 
         #setup top row
-        tmux select-pane -t $session_name:1.1
-        tmux split-window -h -l 75 -t $session_name
+        tmux -u select-pane -t $session_name:1.1
+        tmux -u split-window -h -l 75 -t $session_name
 
         #select first pane and open neovim
-        tmux select-pane -t $session_name:1.1
-        tmux send-keys -t $session_name nvim Enter
+        tmux -u select-pane -t $session_name:1.1
+        tmux -u send-keys -t $session_name nvim Enter
     end
 
     tmux attach-session -t $session_name

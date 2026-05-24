@@ -145,6 +145,7 @@ require("lazy").setup({
 					sh = { "shfmt" },
 					bash = { "shfmt" },
 					fish = { "fish_indent" },
+					kt = { "ktlint" },
 				},
 				formatters = {
 					nixfmt = {
@@ -200,17 +201,7 @@ vim.api.nvim_set_keymap("n", "<leader>rn", "<cmd>set relativenumber!<cr>", { nor
 vim.lsp.enable("basedpyright")
 vim.lsp.enable("nil")
 vim.lsp.enable("lua-language-server")
-
--- Normal and Visual mode mappings to send deletions to the black hole register
-vim.keymap.set({ "n", "v" }, "d", '"_d')
-vim.keymap.set({ "n", "v" }, "D", '"_D')
-vim.keymap.set({ "n", "v" }, "c", '"_c')
-vim.keymap.set({ "n", "v" }, "C", '"_C')
-vim.keymap.set({ "n", "v" }, "x", '"_x')
-vim.keymap.set({ "n", "v" }, "X", '"_X')
-
--- Optional: Preserve your yank behavior when pasting over selected text in Visual mode
-vim.keymap.set("v", "p", '"_dP')
+vim.lsp.enable("kotlin-language-server")
 
 vim.api.nvim_set_hl(0, "DiagnosticUnnecessary", {})
 -- fix cursor shape on exit
@@ -285,17 +276,10 @@ end, { silent = true, buffer = bufnr })
 
 -- kotlin
 
-local blink_capabilities = require("blin.cmp").get_lsp_capabilities()
+vim.lsp.config("kotlin_language_server", {})
+vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
 
-lspconfig.kotlin_language_server.setup({
-	capabilities = blink_capabilities,
-	on_attach = function(client, bufnr)
-		local opts = { buffer = bufnr, remap = false }
-		vim.keymap.set("n", "gd", vim.lsp.buf.definition.opts)
-		vim.keymaps.set("n", "K", vim.lsp.buf.hover, opts)
-	end,
-})
-
-vim.cmd([[highlight Normal guibg=#282828]])
-vim.cmd([[highlight MsgArea guibg=#282828]])
-vim.cmd([[highlight BufferLine guibg=#282828]])
+-- vim.cmd([[highlight Normal guibg=#282828]])
+-- vim.cmd([[highlight MsgArea guibg=#282828]])
+-- vim.cmd([[highlight BufferLine guibg=#282828]])
