@@ -283,6 +283,19 @@ vim.keymap.set("n", "<leader>ra", function()
 	vim.cmd.RustLsp("codeAction")
 end, { silent = true, buffer = bufnr })
 
---vim.cmd([[highlight Normal guibg=#282828]])
---vim.cmd([[highlight MsgArea guibg=#282828]])
---vim.cmd([[highlight BufferLine guibg=#282828]])
+-- kotlin
+
+local blink_capabilities = require("blin.cmp").get_lsp_capabilities()
+
+lspconfig.kotlin_language_server.setup({
+	capabilities = blink_capabilities,
+	on_attach = function(client, bufnr)
+		local opts = { buffer = bufnr, remap = false }
+		vim.keymap.set("n", "gd", vim.lsp.buf.definition.opts)
+		vim.keymaps.set("n", "K", vim.lsp.buf.hover, opts)
+	end,
+})
+
+vim.cmd([[highlight Normal guibg=#282828]])
+vim.cmd([[highlight MsgArea guibg=#282828]])
+vim.cmd([[highlight BufferLine guibg=#282828]])
