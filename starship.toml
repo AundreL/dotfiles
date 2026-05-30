@@ -1,3 +1,29 @@
+
+# Crucial for preventing wrap bugs in tight tmux splits
+add_newline = true
+
+command_timeout = 1300
+scan_timeout = 50
+
+[line_break]
+disabled = false
+
+# format = """$directory$git_branch$git_status$git_shell   $line_break$character"""
+[nix_shell]
+# to force the layout engine to reserve a 2-column bounding box.
+# # Replace the multi-byte emoji with an explicit text tag 
+format = 'via [❄ $state( \($name\))]($style) '
+#currently breaks tmux
+# format = 'via [❄️  $state( \($name\))]($style) '
+impure_msg = 'impure'
+pure_msg = 'pure'
+style = 'bold blue'
+
+[kotlin]
+symbol = "☕ "
+style = "bold blue"
+disabled = false
+
 [hostname]
 ssh_symbol = "\ue795 "
 
@@ -12,11 +38,9 @@ symbol = "\ueb29 "
 
 [username]
 show_always = true
-
 style_user = "bold yellow"
-# Crucial for preventing wrap bugs in tight tmux splits
-add_newline = false
 
 [character]
-success_symbol = "[❯](bold green)"
-error_symbol = "[❯](bold red)"
+success_symbol = "[❯](bold green) "
+vicmd_symbol = "[❮](bold yellow) "
+error_symbol = "[❯](bold red) "

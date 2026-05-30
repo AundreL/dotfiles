@@ -1,7 +1,22 @@
 function start-up
-    # starship init fish | source
+    starship init fish | source
+    enable_transience
     fastfetch
 end
+
+function starship_transient_prompt_func
+    starship module character
+end
+function fish_title
+end
+set -gx LANG en_US.UTF-8
+set -gx LC_CTYPE en_US.UTF-8
+set -gx LC_ALL en_US.UTF-8
+
+set -gx TERM tmux-256color
+
+set -U fish_ambiguous_width single
+set -U fish_emoji_width 1
 
 fish_vi_key_bindings
 
