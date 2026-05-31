@@ -162,7 +162,7 @@ require("lazy").setup({
 			events = { "BufWritePost", "BufReadPost", "InsertLeave" },
 			opts = {
 				linters_by_ft = {
-					go = { "golangci-lint" },
+					go = { "golangcilint" },
 				},
 			},
 			config = function(_, opts)
