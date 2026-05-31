@@ -213,6 +213,15 @@ vim.api.nvim_create_autocmd({ "vimleave" }, {
 	command = "set guicursor=a:ver20",
 })
 
+local function clean_newlines()
+	local save_cursor = vim.fn.getpos(".")
+	vim.opt_local.fileformat = "unix"
+	vim.cmd([[%s/\r//e]])
+	vim.fn.setpos(".", save_cursor)
+end
+
+vim.api.nvim_create_user_command("CleanFiles", clean_newlines, {})
+
 -- conform formatter
 local format_group = vim.api.nvim_create_augroup("format_on_write", { clear = true })
 
