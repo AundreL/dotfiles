@@ -146,6 +146,7 @@ require("lazy").setup({
 					bash = { "shfmt" },
 					fish = { "fish_indent" },
 					kt = { "ktlint" },
+					cs = { "csharpier" },
 				},
 				formatters = {
 					nixfmt = {
@@ -202,6 +203,7 @@ vim.lsp.enable("basedpyright")
 vim.lsp.enable("nil")
 vim.lsp.enable("lua-language-server")
 vim.lsp.enable("kotlin-language-server")
+vim.lsp.enable("omnisharp")
 
 vim.api.nvim_set_hl(0, "DiagnosticUnnecessary", {})
 -- fix cursor shape on exit
