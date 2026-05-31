@@ -147,11 +147,21 @@ require("lazy").setup({
 					fish = { "fish_indent" },
 					kt = { "ktlint" },
 					cs = { "csharpier" },
+					go = { "goimports", "gofmt" },
 				},
 				formatters = {
 					nixfmt = {
 						prepend_args = { "--indent", "4" },
 					},
+				},
+			},
+		},
+		-- linter
+		{
+			"mfussenegger/nvim-lint",
+			opts = {
+				linters_by_ft = {
+					go = { "golangci-lint" },
 				},
 			},
 		},
@@ -184,7 +194,7 @@ vim.o.shiftwidth = 4
 vim.o.expandtab = true
 vim.o.relativenumber = true
 vim.o.timeoutlen = 500
-vim.o.updatetime = 1000
+vim.o.updatetime = 900
 
 vim.opt.clipboard = "unnamedplus"
 
@@ -192,11 +202,13 @@ vim.opt.signcolumn = "yes:2"
 vim.opt.termguicolors = true
 vim.opt.swapfile = false
 vim.opt.wrap = false
-vim.opt.scrolloff = 20 -- Keep 10 lines of context above/below'
+vim.opt.scrolloff = 20 -- Keep 10 lines of context above/below
 
+-- set leader key
 vim.g.mapleader = " "
 vim.gnmaplocalleader = "\\"
 
+-- toggle relativenumber
 vim.api.nvim_set_keymap("n", "<leader>rn", "<cmd>set relativenumber!<cr>", { noremap = true, silent = true })
 
 vim.lsp.enable("basedpyright")
@@ -204,8 +216,21 @@ vim.lsp.enable("nil")
 vim.lsp.enable("lua-language-server")
 vim.lsp.enable("kotlin-language-server")
 vim.lsp.enable("omnisharp")
+vim.lsp.enable("gopls")
 
+-- rustlsp
+vim.keymap.set("n", "<leader>ra", function()
+	vim.cmd.RustLsp("codeAction")
+end, { silent = true, buffer = bufnr })
+
+-- cleanup issue with highlighting on #[cfg(not(test))]
 vim.api.nvim_set_hl(0, "DiagnosticUnnecessary", {})
+
+-- kotlin
+vim.lsp.config("kotlin_language_server", {})
+vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+
 -- fix cursor shape on exit
 local restore_cursor_augroup = vim.api.nvim_create_augroup("restore_cursor_shape_on_exit", { clear = true })
 
@@ -215,6 +240,7 @@ vim.api.nvim_create_autocmd({ "vimleave" }, {
 	command = "set guicursor=a:ver20",
 })
 
+-- clean up windows newline characters
 local function clean_newlines()
 	local save_cursor = vim.fn.getpos(".")
 	vim.opt_local.fileformat = "unix"
@@ -272,25 +298,10 @@ vim.keymap.set("n", "<C-s>", function()
 	harpoon:list():select(4)
 end)
 
--- Toggle previous & next buffers stored within Harpoon list
+-- toggle previous & next buffers stored within harpoon list
 vim.keymap.set("n", "<C-S-P>", function()
 	harpoon:list():prev()
 end)
 vim.keymap.set("n", "<C-S-N>", function()
 	harpoon:list():next()
 end)
-
--- rustlsp
-vim.keymap.set("n", "<leader>ra", function()
-	vim.cmd.RustLsp("codeAction")
-end, { silent = true, buffer = bufnr })
-
--- kotlin
-
-vim.lsp.config("kotlin_language_server", {})
-vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-
--- vim.cmd([[highlight Normal guibg=#282828]])
--- vim.cmd([[highlight MsgArea guibg=#282828]])
--- vim.cmd([[highlight BufferLine guibg=#282828]])
