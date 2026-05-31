@@ -33,7 +33,7 @@ bind -M default p fish_clipboard_paste
 alias reloadfish="source ~/.config/fish/config.fish"
 alias reloadtmux="tmux source-file ~/.tmux.conf"
 alias tree="eza --tree"
-alias dev-nix-rebuild-dev-wsl="sudo nixos-rebuild switch --flake path:nix-flakes\"\#dev-wsl\" --override-input aundre-dotfiles path:dotfiles"
+alias dev-nix-rebuild-dev-wsl="sudo nixos-rebuild switch --impure --flake path:nix-flakes\"#dev-wsl\" --override-input aundre-dotfiles path:dotfiles"
 
 function yazi-nvim
     nvim (yazi --chooser-file=/dev/stdout)
