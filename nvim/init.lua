@@ -148,7 +148,7 @@ require("lazy").setup({
 					kt = { "ktlint" },
 					cs = { "csharpier" },
 					go = { "goimports", "gofmt" },
-					toml = "taplo",
+					toml = { "taplo" },
 				},
 				formatters = {
 					nixfmt = {
