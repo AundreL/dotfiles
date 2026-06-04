@@ -149,10 +149,13 @@ require("lazy").setup({
 					cs = { "csharpier" },
 					go = { "goimports", "gofmt" },
 					toml = { "taplo" },
+					json = { "jq" },
+					yaml = { "yamlfmt", "prettier", stop_after_first = true },
+					yml = { "yamlfmt", "prettier", stop_after_first = true },
 				},
 				formatters = {
 					nixfmt = {
-						prepend_args = { "--indent", "4" },
+						prepend_args = { "--indent", "3" },
 					},
 				},
 			},
@@ -224,11 +227,12 @@ vim.gnmaplocalleader = "\\"
 vim.api.nvim_set_keymap("n", "<leader>rn", "<cmd>set relativenumber!<cr>", { noremap = true, silent = true })
 
 vim.lsp.enable("basedpyright")
-vim.lsp.enable("nil")
+vim.lsp.enable("nixd")
 vim.lsp.enable("lua-language-server")
 vim.lsp.enable("kotlin-language-server")
 vim.lsp.enable("omnisharp")
 vim.lsp.enable("gopls")
+vim.lsp.enable("nill")
 
 -- rustlsp
 vim.keymap.set("n", "<leader>ra", function()
