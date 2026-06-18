@@ -32,6 +32,7 @@ require("lazy").setup({
 			dependencies = "rafamadriz/friendly-snippets",
 			version = "1.*",
 			---@module 'blink.cmp'
+			---@diagnostic disable: undefined-doc-name
 			---@type blink.cmp.Config
 			opts = {
 				keymap = { preset = "default" },
@@ -77,6 +78,7 @@ require("lazy").setup({
 					desc = "Resume the last yazi session",
 				},
 			},
+			---@diagnostic disable: undefined-doc-name
 			---@type YaziConfig | {}
 			opts = {
 				-- if you want to open yazi instead of netrw, see below for more info
@@ -106,6 +108,9 @@ require("lazy").setup({
 			dependencies = {
 				"nvim-lua/plenary.nvim",
 				-- optional but recommended
+				file_ignore_patterns = {
+					"node_modules/.*",
+				},
 				{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 			},
 		},
@@ -156,6 +161,9 @@ require("lazy").setup({
 				formatters = {
 					nixfmt = {
 						prepend_args = { "--indent", "3" },
+					},
+					jq = {
+						args = { "--indent", "3", "." },
 					},
 				},
 			},
@@ -226,13 +234,31 @@ vim.gnmaplocalleader = "\\"
 -- toggle relativenumber
 vim.api.nvim_set_keymap("n", "<leader>rn", "<cmd>set relativenumber!<cr>", { noremap = true, silent = true })
 
-vim.lsp.enable("basedpyright")
-vim.lsp.enable("nixd")
+local bufnr = vim.api.nvim_get_current_buf()
+
+vim.lsp.enable({
+	"basedpyright",
+	"nixd",
+	"omnisharp",
+	"gopls",
+	"nill",
+})
+
+vim.diagnostic.config({
+	virtual_text = true,
+	-- virtual_text = { current_line = true },
+	-- virtual_lines = { current_line = true },
+})
+
+-- lualsp
+vim.lsp.config("lua-language-server", {
+	name = "lua-language-server",
+	cmd = { "lua-language-server" },
+	root_dir = vim.fs.root(bufnr, { ".git", ".luarc.json", "init.lua" }),
+	filetypes = { "lua" },
+})
+
 vim.lsp.enable("lua-language-server")
-vim.lsp.enable("kotlin-language-server")
-vim.lsp.enable("omnisharp")
-vim.lsp.enable("gopls")
-vim.lsp.enable("nill")
 
 -- rustlsp
 vim.keymap.set("n", "<leader>ra", function()
@@ -242,15 +268,31 @@ end, { silent = true, buffer = bufnr })
 -- cleanup issue with highlighting on #[cfg(not(test))]
 vim.api.nvim_set_hl(0, "DiagnosticUnnecessary", {})
 
+--typescript lsp
+vim.lsp.config("typescript-language-server", {
+	cmd = { "typescript-language-server", "--stdio" },
+	filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+	root_markers = { "tsconfig.json", "package.json", ".git" },
+	typescript = {
+		suggest = { completeFunctionCalls = true },
+	},
+	javascript = {
+		suggest = { completeFunctionCalls = true },
+	},
+})
+
+vim.lsp.enable("typescript-language-server")
+
 -- kotlin
-vim.lsp.config("kotlin_language_server", {})
+vim.lsp.config("kotlin-language-server", {})
+vim.lsp.enable("kotlin-language-server")
 vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
 vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
 
 -- fix cursor shape on exit
 local restore_cursor_augroup = vim.api.nvim_create_augroup("restore_cursor_shape_on_exit", { clear = true })
 
-vim.api.nvim_create_autocmd({ "vimleave" }, {
+vim.api.nvim_create_autocmd({ "VimLeave" }, {
 	group = restore_cursor_augroup,
 	desc = "restore the cursor shape on exit of neovim",
 	command = "set guicursor=a:ver20",
@@ -277,8 +319,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 		require("conform").format({ bufnr = args.buf })
 	end,
 })
-
-local bufnr = vim.api.nvim_get_current_buf()
 
 -- telescope
 local builtin = require("telescope.builtin")
